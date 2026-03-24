@@ -1,26 +1,47 @@
-async function convert() {
-  const files = document.getElementById('img').files;
-  const status = document.getElementById('status');
+document.getElementById("convertBtn").addEventListener("click", async () => {
+    const fileInput = document.getElementById("fileInput");
+    const status = document.getElementById("status");
 
-  if (!files.length) return alert("Upload images");
+    if (!fileInput.files.length) {
+        alert("Please select an image");
+        return;
+    }
 
-  status.innerText = "Processing...";
+    status.innerText = "Processing...";
 
-  const { PDFDocument } = PDFLib;
-  const pdf = await PDFDocument.create();
+    const file = fileInput.files[0];
 
-  for (let f of files) {
-    const bytes = await f.arrayBuffer();
-    const img = f.type.includes("png")
-      ? await pdf.embedPng(bytes)
-      : await pdf.embedJpg(bytes);
+    const reader = new FileReader();
 
-    const page = pdf.addPage([img.width, img.height]);
-    page.drawImage(img, {x:0,y:0,width:img.width,height:img.height});
-  }
+    reader.onload = function (event) {
+        const img = new Image();
 
-  const out = await pdf.save();
-  download(out, "images.pdf");
+        img.onload = function () {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
 
-  status.innerText = "Done ✅";
-}
+            // Resize image (important for mobile 🚀)
+            const maxWidth = 800;
+            const scale = maxWidth / img.width;
+
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+
+            pdf.addImage(imgData, "JPEG", 10, 10, 180, 0);
+            pdf.save("converted.pdf");
+
+            status.innerText = "Done ✅";
+        };
+
+        img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
+});
