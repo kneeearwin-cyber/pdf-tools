@@ -2,91 +2,189 @@
 <html>
 <head>
   <title>Smart PDF Splitter</title>
+
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
   <style>
     body {
+      margin: 0;
       font-family: Arial;
-      background: #0f172a;
+      background: #020617;
       color: white;
-      text-align: center;
-      padding: 20px;
     }
 
-    h1 {
+    .container {
+      max-width: 450px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    h2 {
       color: #38bdf8;
     }
 
-    .box {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
     input, button {
-      margin: 10px;
+      width: 100%;
       padding: 10px;
-      width: 90%;
+      margin: 8px 0;
       border-radius: 8px;
       border: none;
     }
 
     input {
-      background: #334155;
+      background: #1e293b;
       color: white;
     }
 
     button {
-      background: #38bdf8;
-      color: black;
+      background: #0ea5e9;
       font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #0ea5e9;
+      background: #38bdf8;
     }
 
-    .tip {
-      font-size: 12px;
-      color: #94a3b8;
+    #preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
       margin-top: 10px;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 60px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    canvas.selected {
+      border: 2px solid #22c55e;
     }
 
     #status {
       margin-top: 10px;
       color: #22c55e;
     }
+
+    .ai-box {
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
   </style>
 </head>
 
 <body>
 
-<h1>📄 Smart PDF Splitter</h1>
+<div class="container">
+  <div class="card">
 
-<div class="box">
+    <h2>📄 Smart PDF Splitter</h2>
 
-<input type="file" id="pdfFile">
+    <!-- 🤖 AI INPUT -->
+    <div class="ai-box">
+      <input type="text" id="aiInput" placeholder="🤖 Type: split first 20 pages / split into 4 parts">
+      <button onclick="processAI()">Use AI Command</button>
+    </div>
 
-<input type="number" id="parts" placeholder="Quick Split (e.g. 4 parts)">
+    <input type="file" id="pdfFile" onchange="previewPDF()">
 
-<input type="text" id="range" placeholder="Smart Split (e.g. 1-20,21-40)">
+    <input type="number" id="parts" placeholder="Quick Split (e.g. 4)">
+    <input type="text" id="range" placeholder="Smart Split (1-20,21-40)">
 
-<button onclick="splitPDF()">Split PDF</button>
+    <button onclick="splitPDF()">Split PDF</button>
 
-<p class="tip">
-💡 Tip: Use range mode to avoid breaking topics<br>
-Example: 1-25,26-50,51-75
-</p>
+    <div id="preview"></div>
 
-<p id="status"></p>
+    <p id="status"></p>
 
+  </div>
 </div>
 
 <script>
+let pdfDoc = null;
+let selectedPages = [];
+
+// 🤖 AI COMMAND PROCESSOR
+function processAI() {
+  const input = document.getElementById("aiInput").value.toLowerCase();
+
+  // split into parts
+  if (input.includes("parts")) {
+    const num = input.match(/\d+/);
+    if (num) {
+      document.getElementById("parts").value = num[0];
+      alert("AI set Quick Split: " + num[0]);
+    }
+  }
+
+  // split range
+  if (input.includes("page")) {
+    const numbers = input.match(/\d+/g);
+    if (numbers && numbers.length >= 2) {
+      document.getElementById("range").value = numbers[0] + "-" + numbers[1];
+      alert("AI set Range: " + numbers[0] + "-" + numbers[1]);
+    }
+  }
+}
+
+// 🔥 PREVIEW
+async function previewPDF() {
+  const file = document.getElementById("pdfFile").files[0];
+  const preview = document.getElementById("preview");
+
+  preview.innerHTML = "";
+  selectedPages = [];
+
+  const arrayBuffer = await file.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({data: arrayBuffer});
+  pdfDoc = await loadingTask.promise;
+
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+
+    const viewport = page.getViewport({scale: 0.3});
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({canvasContext: context, viewport}).promise;
+
+    canvas.onclick = () => toggleSelect(canvas, i);
+
+    preview.appendChild(canvas);
+  }
+}
+
+// SELECT
+function toggleSelect(canvas, pageNum) {
+  if (selectedPages.includes(pageNum)) {
+    selectedPages = selectedPages.filter(p => p !== pageNum);
+    canvas.classList.remove("selected");
+  } else {
+    selectedPages.push(pageNum);
+    canvas.classList.add("selected");
+  }
+}
+
+// SPLIT
 async function splitPDF() {
   const fileInput = document.getElementById("pdfFile");
   const parts = parseInt(document.getElementById("parts").value);
@@ -101,12 +199,26 @@ async function splitPDF() {
   status.innerText = "⏳ Processing...";
 
   const file = fileInput.files[0];
-  const arrayBuffer = await file.arrayBuffer();
+  const buffer = await file.arrayBuffer();
+  const originalPdf = await PDFLib.PDFDocument.load(buffer);
 
-  const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-  const totalPages = pdfDoc.getPageCount();
+  const totalPages = originalPdf.getPageCount();
 
-  // 🔥 SMART RANGE MODE
+  // selected pages
+  if (selectedPages.length > 0) {
+    const newPdf = await PDFLib.PDFDocument.create();
+
+    for (let p of selectedPages) {
+      const [page] = await newPdf.copyPages(originalPdf, [p - 1]);
+      newPdf.addPage(page);
+    }
+
+    download(await newPdf.save(), "selected.pdf");
+    status.innerText = "✅ Done (Selected)";
+    return;
+  }
+
+  // range
   if (range.trim() !== "") {
     const ranges = range.split(",");
 
@@ -116,25 +228,18 @@ async function splitPDF() {
       const newPdf = await PDFLib.PDFDocument.create();
 
       for (let j = start - 1; j < end && j < totalPages; j++) {
-        const [page] = await newPdf.copyPages(pdfDoc, [j]);
+        const [page] = await newPdf.copyPages(originalPdf, [j]);
         newPdf.addPage(page);
       }
 
-      const pdfBytes = await newPdf.save();
-      download(pdfBytes, "smart_split_" + (i+1) + ".pdf");
+      download(await newPdf.save(), "range_" + (i+1) + ".pdf");
     }
 
-    status.innerText = "✅ Done (Smart Split)";
+    status.innerText = "✅ Done (Range)";
     return;
   }
 
-  // 🔥 QUICK SPLIT MODE
-  if (!parts || parts < 1) {
-    alert("Enter parts or range");
-    status.innerText = "";
-    return;
-  }
-
+  // parts
   const pagesPerPart = Math.ceil(totalPages / parts);
 
   for (let i = 0; i < parts; i++) {
@@ -144,26 +249,25 @@ async function splitPDF() {
     const end = Math.min(start + pagesPerPart, totalPages);
 
     for (let j = start; j < end; j++) {
-      const [page] = await newPdf.copyPages(pdfDoc, [j]);
+      const [page] = await newPdf.copyPages(originalPdf, [j]);
       newPdf.addPage(page);
     }
 
-    const pdfBytes = await newPdf.save();
-    download(pdfBytes, "quick_split_" + (i+1) + ".pdf");
+    download(await newPdf.save(), "part_" + (i+1) + ".pdf");
   }
 
-  status.innerText = "✅ Done (Quick Split)";
+  status.innerText = "✅ Done (Parts)";
 }
 
-// download helper
-function download(bytes, filename) {
-  const blob = new Blob([bytes], { type: "application/pdf" });
+// download
+function download(bytes, name) {
+  const blob = new Blob([bytes], {type: "application/pdf"});
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = filename;
+  link.download = name;
   link.click();
 }
 </script>
 
 </body>
-</html>
+  </html>
