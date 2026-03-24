@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart PDF Tools AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart AI powered PDF tools. Merge, compress, split and convert easily.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header glass">
+  <span class="menu-btn" onclick="openMenu()">☰</span>
+  <h2 class="logo">Smart PDF Tools</h2>
+  <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+</header>
+
+<!-- MENU -->
+<div id="menu" class="menu glass">
+  <div class="menu-header">⚡ Menu</div>
+  <a href="#" onclick="closeMenu()">🏠 Home</a>
+  <a href="#services" onclick="closeMenu()">🧾 Services</a>
+  <a href="#reviews" onclick="closeMenu()">⭐ Reviews</a>
+  <a href="#contact" onclick="closeMenu()">📞 Contact</a>
+</div>
+
+<div id="overlay" class="overlay" onclick="closeMenu()"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+
+  <h1 class="fade-in">🚀 Smart PDF Tools</h1>
+  <p class="fade-in delay">Fast • Secure • AI Assisted</p>
+
+  <input class="fade-in delay2" type="text" id="command" placeholder="e.g. merge pdf, compress file">
+  <button class="glow-btn fade-in delay3" onclick="runCommand()">Run</button>
+
+  <div id="aiResponse" class="ai-box"></div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools">
+  <a href="merge.html" class="card">📄 Merge PDF</a>
+  <a href="compress.html" class="card">📉 Compress PDF</a>
+  <a href="image.html" class="card">🖼️ Image to PDF</a>
+  <a href="split.html" class="card">✂️ Split PDF</a>
+  <a href="compress-pdf-100kb.html" class="card">🎯 Compress to 100KB</a>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section">
+  <h2>Our Services</h2>
+
+  <p class="glass">Process PDF files instantly in your browser with no uploads, ensuring complete privacy and maximum security for every user.</p>
+  <p class="glass">Merge multiple PDF documents into one organized file quickly using a simple and beginner-friendly interface.</p>
+  <p class="glass">Compress large files efficiently while maintaining quality for easy sharing and storage.</p>
+  <p class="glass">Convert images into PDF documents in seconds with clean formatting and structure.</p>
+  <p class="glass">Split large documents into smaller files based on page selection without complexity.</p>
+
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" class="section">
+  <h2>User Reviews</h2>
+
+  <div class="review glass">⭐️⭐️⭐️⭐️⭐️ Super smooth UI, feels like premium app.</div>
+  <div class="review glass">⭐️⭐️⭐️⭐️⭐️ Very fast processing and easy to use.</div>
+  <div class="review glass">⭐️⭐️⭐️⭐️⭐️ Best free tool I’ve used for PDFs.</div>
+
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <p>© 2026 Smart PDF Tools</p>
+</footer>
+
+<!-- FLOATING CHAT -->
+<div class="chat-btn" onclick="toggleChat()">💬</div>
+
+<div id="chatBox" class="chat-box glass">
+  <div class="chat-header">AI Assistant</div>
+  <div id="chatContent">Hi 👋 Try: merge, compress</div>
+  <input id="chatInput" placeholder="Type...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script src="js/ai.js"></script>
+
+<script>
+function openMenu(){
+  menu.classList.add("active");
+  overlay.classList.add("show");
+}
+function closeMenu(){
+  menu.classList.remove("active");
+  overlay.classList.remove("show");
+}
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+}
+function toggleChat(){
+  chatBox.style.display = chatBox.style.display==="block"?"none":"block";
+}
+function sendMessage(){
+  let input = chatInput.value.toLowerCase();
+  chatContent.innerHTML += "<br><b>You:</b> "+input;
+
+  if(input.includes("merge")){
+    setTimeout(()=>location.href="merge.html",800);
+  }
+  else if(input.includes("compress")){
+    setTimeout(()=>location.href="compress.html",800);
+  }
+}
+</script>
+
+</body>
+</html>

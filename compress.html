@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Compress PDF</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>Compress PDF</h2>
+
+<input type="file" id="file">
+<select id="level">
+  <option value="low">Low</option>
+  <option value="medium">Medium</option>
+  <option value="high">High</option>
+</select>
+
+<button onclick="compressPDF()">Compress</button>
+<div id="status"></div>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="js/compress.js"></script>
+
+</body>
+</html>

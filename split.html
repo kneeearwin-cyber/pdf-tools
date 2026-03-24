@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Split PDF</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>Split PDF</h2>
+
+<input type="file" id="file">
+<input type="number" id="page" placeholder="Page number">
+
+<button onclick="splitPDF()">Split</button>
+<div id="status"></div>
+
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="js/split.js"></script>
+
+</body>
+</html>
