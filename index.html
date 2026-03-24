@@ -10,7 +10,7 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #020617;
+  background: linear-gradient(135deg,#020617,#0f172a);
   color: white;
   transition: 0.3s;
 }
@@ -21,12 +21,11 @@ body {
   color: black;
 }
 
-.light .card,
-.light .tool,
-.light .sidebar,
-.light .review-box {
-  background: white;
-  color: black;
+/* CONTAINER */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 15px;
 }
 
 /* NAV */
@@ -34,7 +33,6 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 15px;
-  background: #020617;
 }
 
 /* SIDEBAR */
@@ -47,13 +45,14 @@ body {
   background: #0f172a;
   padding: 20px;
   transition: 0.3s;
+  z-index: 1000;
 }
 
 .sidebar.active { left: 0; }
 
 .sidebar a {
   display: block;
-  margin: 10px 0;
+  margin: 12px 0;
   color: white;
   text-decoration: none;
 }
@@ -65,6 +64,7 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.5);
   display: none;
+  z-index: 999;
 }
 
 .overlay.active { display: block; }
@@ -72,70 +72,80 @@ body {
 /* HEADER */
 .header {
   text-align: center;
-  padding: 25px;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
 }
 
 .search-box input {
-  width: 60%;
-  padding: 10px;
+  flex: 1;
+  padding: 12px;
   border-radius: 10px;
   border: none;
 }
 
 .search-box button {
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
   background: #22c55e;
   border: none;
   color: white;
+  cursor: pointer;
 }
 
 /* TOOLS */
 .tools {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
-  gap: 10px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .tool {
   background: #0f172a;
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-/* SECTION */
-.section {
+.tool:hover {
+  transform: scale(1.05);
+  background: #1e293b;
+}
+
+/* DROP AREA */
+.drop-area {
+  border: 2px dashed #22c55e;
   padding: 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+  text-align: center;
+  opacity: 0.8;
 }
 
-/* CARDS */
+/* CARD */
 .card {
   background: #0f172a;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  margin-top: 15px;
   border-radius: 10px;
 }
 
-/* REVIEW SYSTEM */
-.review-box {
-  background: #1e293b;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
+/* REVIEW */
 .review-box input, textarea {
   width: 100%;
+  margin-top: 5px;
   padding: 8px;
-  margin: 5px 0;
   border-radius: 8px;
   border: none;
 }
 
 .review-box button {
+  margin-top: 8px;
   background: #22c55e;
   border: none;
   padding: 8px;
@@ -145,9 +155,16 @@ body {
 
 .review {
   background: #334155;
-  padding: 8px;
   margin-top: 8px;
+  padding: 8px;
   border-radius: 8px;
+}
+
+/* LOADER */
+.loader {
+  display: none;
+  text-align: center;
+  margin-top: 10px;
 }
 
 /* AI */
@@ -170,10 +187,9 @@ body {
   display: none;
 }
 
-/* FOOTER */
 footer {
   text-align: center;
-  padding: 20px;
+  margin-top: 20px;
 }
 
 </style>
@@ -197,6 +213,8 @@ footer {
   <button onclick="toggleMode()">🌗</button>
 </div>
 
+<div class="container">
+
 <div class="header">
   <h2>🚀 Smart PDF Tools</h2>
 
@@ -206,6 +224,7 @@ footer {
   </div>
 </div>
 
+<!-- TOOLS -->
 <div class="tools">
 <div class="tool" onclick="go('merge.html')">Merge</div>
 <div class="tool" onclick="go('split.html')">Split</div>
@@ -214,20 +233,25 @@ footer {
 <div class="tool" onclick="go('compress-100kb.html')">100KB</div>
 </div>
 
-<div class="section">
-<h3>About</h3>
-<div class="card">Fast, secure PDF tools with no upload.</div>
+<!-- DRAG DROP -->
+<div class="drop-area" id="drop">
+📂 Drag & Drop your file here
 </div>
 
-<!-- REVIEW SYSTEM -->
-<div class="section">
-<h3>User Reviews ⭐</h3>
+<div class="loader" id="loader">⚡ Processing...</div>
 
-<div class="review-box">
-<input id="name" placeholder="Your name">
-<textarea id="msg" placeholder="Your review"></textarea>
+<div class="card">
+Fast, secure PDF tools. No upload. Instant processing.
+</div>
 
-<select id="rating">
+<!-- REVIEWS -->
+<div class="card review-box">
+<h3>⭐ Reviews</h3>
+
+<input id="nameInput" placeholder="Your name">
+<textarea id="msgInput" placeholder="Your review"></textarea>
+
+<select id="ratingSelect">
 <option>⭐</option>
 <option>⭐⭐</option>
 <option>⭐⭐⭐</option>
@@ -236,21 +260,21 @@ footer {
 </select>
 
 <button onclick="addReview()">Submit</button>
-</div>
 
 <div id="reviews"></div>
 
 </div>
 
-<!-- AI -->
+<footer>© 2026 Smart PDF Tools</footer>
+
+</div>
+
 <div class="ai-btn" onclick="toggleAI()">💬</div>
 
 <div class="ai-chat" id="aiBox">
 <input id="aiInput" placeholder="Type command">
 <button onclick="runAI()">Go</button>
 </div>
-
-<footer>© 2026 Smart PDF Tools</footer>
 
 <script>
 
@@ -275,6 +299,7 @@ function toggleAI(){
   b.style.display = b.style.display==="block" ? "none" : "block";
 }
 
+/* AI COMMAND */
 function runAI(){
   let c=document.getElementById("cmd").value.toLowerCase();
 
@@ -285,29 +310,48 @@ function runAI(){
   else if(c.includes("compress")) go("compress.html");
 }
 
-/* REVIEW SYSTEM */
+/* DRAG DROP */
+let drop=document.getElementById("drop");
+
+drop.ondragover=e=>{
+  e.preventDefault();
+  drop.style.background="#1e293b";
+};
+
+drop.ondragleave=e=>{
+  drop.style.background="";
+};
+
+drop.ondrop=e=>{
+  e.preventDefault();
+  loader.style.display="block";
+
+  setTimeout(()=>{
+    loader.style.display="none";
+    alert("File ready! Choose tool now.");
+  },1500);
+};
+
+/* REVIEWS */
 function addReview(){
-  let name=document.getElementById("name").value;
-  let msg=document.getElementById("msg").value;
-  let rating=document.getElementById("rating").value;
+  let name=nameInput.value;
+  let msg=msgInput.value;
+  let rating=ratingSelect.value;
 
-  let review = `${rating} ${name}: ${msg}`;
+  let r = `${rating} ${name}: ${msg}`;
 
-  let reviews = JSON.parse(localStorage.getItem("reviews")||"[]");
-  reviews.push(review);
-
-  localStorage.setItem("reviews", JSON.stringify(reviews));
+  let arr=JSON.parse(localStorage.getItem("reviews")||"[]");
+  arr.push(r);
+  localStorage.setItem("reviews", JSON.stringify(arr));
 
   loadReviews();
 }
 
 function loadReviews(){
-  let reviews = JSON.parse(localStorage.getItem("reviews")||"[]");
-  let div=document.getElementById("reviews");
-  div.innerHTML="";
-
-  reviews.forEach(r=>{
-    div.innerHTML += `<div class="review">${r}</div>`;
+  let arr=JSON.parse(localStorage.getItem("reviews")||"[]");
+  reviews.innerHTML="";
+  arr.forEach(x=>{
+    reviews.innerHTML+=`<div class="review">${x}</div>`;
   });
 }
 
@@ -316,4 +360,4 @@ loadReviews();
 </script>
 
 </body>
-</html>
+  </html>
