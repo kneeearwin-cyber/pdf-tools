@@ -1,4 +1,5 @@
-document.getElementById("convertBtn").addEventListener("click", async () => {
+document.getElementById("convertBtn").addEventListener("click", function () {
+
     const fileInput = document.getElementById("fileInput");
     const status = document.getElementById("status");
 
@@ -10,17 +11,18 @@ document.getElementById("convertBtn").addEventListener("click", async () => {
     status.innerText = "Processing...";
 
     const file = fileInput.files[0];
-
     const reader = new FileReader();
 
-    reader.onload = function (event) {
+    reader.onload = function (e) {
         const img = new Image();
 
         img.onload = function () {
+
+            // Create canvas
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
 
-            // Resize image (important for mobile 🚀)
+            // Resize for mobile performance 🚀
             const maxWidth = 800;
             const scale = maxWidth / img.width;
 
@@ -31,6 +33,7 @@ document.getElementById("convertBtn").addEventListener("click", async () => {
 
             const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
+            // Create PDF
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF();
 
@@ -40,7 +43,15 @@ document.getElementById("convertBtn").addEventListener("click", async () => {
             status.innerText = "Done ✅";
         };
 
-        img.src = event.target.result;
+        img.onerror = function () {
+            status.innerText = "Error loading image ❌";
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.onerror = function () {
+        status.innerText = "Error reading file ❌";
     };
 
     reader.readAsDataURL(file);
