@@ -12,15 +12,67 @@
 <input type="file" id="fileInput" accept="image/*">
 <br><br>
 
-<button id="convertBtn">Convert</button>
+<button onclick="convertToPDF()">Convert</button>
 
 <p id="status"></p>
 
-<!-- jsPDF -->
+<!-- jsPDF (IMPORTANT) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- JS -->
-<script src="js/image.js"></script>
+<script>
+function convertToPDF() {
+
+    const fileInput = document.getElementById("fileInput");
+    const status = document.getElementById("status");
+
+    if (!fileInput.files.length) {
+        alert("Please select an image");
+        return;
+    }
+
+    status.innerText = "Processing...";
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+        const img = new Image();
+
+        img.onload = function () {
+            try {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                const maxWidth = 800;
+                const scale = maxWidth / img.width;
+
+                canvas.width = maxWidth;
+                canvas.height = img.height * scale;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                const imgData = canvas.toDataURL("image/jpeg", 0.7);
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+
+                pdf.addImage(imgData, "JPEG", 10, 10, 180, 0);
+                pdf.save("converted.pdf");
+
+                status.innerText = "Done ✅";
+
+            } catch (err) {
+                console.error(err);
+                status.innerText = "Error ❌";
+            }
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+}
+</script>
 
 </body>
 </html>
