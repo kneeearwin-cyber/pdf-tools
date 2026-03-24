@@ -1,18 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Merge PDF</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Smart PDF Merger</title>
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #020617;
+      color: white;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+
+    h2 {
+      color: #38bdf8;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      background: #1e293b;
+      color: white;
+    }
+
+    button {
+      background: #0ea5e9;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #38bdf8;
+    }
+
+    .file-list {
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .file-item {
+      background: #1e293b;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .remove {
+      color: red;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #22c55e;
+    }
+
+    .ai-box {
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+  </style>
 </head>
+
 <body>
 
-<h2>Merge PDF</h2>
-<input type="file" id="files" multiple>
-<button onclick="mergePDF()">Merge</button>
-<div id="status" class="status"></div>
+<div class="container">
+  <div class="card">
 
-<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-<script src="js/merge.js"></script>
+    <h2>📄 Smart PDF Merger</h2>
+
+    <!-- 🤖 AI -->
+    <div class="ai-box">
+      <input type="text" id="aiInput" placeholder="🤖 Type: merge all files">
+      <button onclick="processAI()">Use AI Command</button>
+    </div>
+
+    <input type="file" id="pdfFiles" multiple>
+
+    <div id="fileList" class="file-list"></div>
+
+    <button onclick="mergePDF()">Merge PDF</button>
+
+    <p id="status"></p>
+
+  </div>
+</div>
+
+<script>
+let files = [];
+
+document.getElementById("pdfFiles").addEventListener("change", function(e) {
+  files = Array.from(e.target.files);
+  renderFiles();
+});
+
+// show file list
+function renderFiles() {
+  const list = document.getElementById("fileList");
+  list.innerHTML = "";
+
+  files.forEach((file, index) => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+
+    div.innerHTML = `
+      ${file.name}
+      <span class="remove" onclick="removeFile(${index})">❌</span>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+// remove file
+function removeFile(index) {
+  files.splice(index, 1);
+  renderFiles();
+}
+
+// 🤖 AI (basic)
+function processAI() {
+  const input = document.getElementById("aiInput").value.toLowerCase();
+
+  if (input.includes("merge")) {
+    alert("AI ready: Click merge to combine files");
+  }
+}
+
+// merge
+async function mergePDF() {
+  const status = document.getElementById("status");
+
+  if (files.length === 0) {
+    alert("Upload PDFs first");
+    return;
+  }
+
+  status.innerText = "⏳ Merging...";
+
+  const mergedPdf = await PDFLib.PDFDocument.create();
+
+  for (let file of files) {
+    const buffer = await file.arrayBuffer();
+    const pdf = await PDFLib.PDFDocument.load(buffer);
+
+    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+
+    pages.forEach(p => mergedPdf.addPage(p));
+  }
+
+  const bytes = await mergedPdf.save();
+
+  const blob = new Blob([bytes], { type: "application/pdf" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "merged.pdf";
+  link.click();
+
+  status.innerText = "✅ Done!";
+}
+</script>
 
 </body>
-</html>
+  </html>
