@@ -1,78 +1,246 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image to PDF</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  <title>Smart Image to PDF</title>
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
-<body style="font-family: Arial; padding:20px;">
-
-<h2>📄 Image to PDF</h2>
-
-<input type="file" id="fileInput" accept="image/*">
-<br><br>
-
-<button onclick="convertToPDF()">Convert</button>
-
-<p id="status"></p>
-
-<!-- jsPDF (IMPORTANT) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-function convertToPDF() {
-
-    const fileInput = document.getElementById("fileInput");
-    const status = document.getElementById("status");
-
-    if (!fileInput.files.length) {
-        alert("Please select an image");
-        return;
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #020617;
+      color: white;
     }
 
-    status.innerText = "Processing...";
+    .container {
+      max-width: 450px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
 
-    const file = fileInput.files[0];
-    const reader = new FileReader();
+    .card {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
 
-    reader.onload = function (e) {
-        const img = new Image();
+    h2 {
+      color: #38bdf8;
+    }
 
-        img.onload = function () {
-            try {
-                const canvas = document.createElement("canvas");
-                const ctx = canvas.getContext("2d");
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+    }
 
-                const maxWidth = 800;
-                const scale = maxWidth / img.width;
+    input {
+      background: #1e293b;
+      color: white;
+    }
 
-                canvas.width = maxWidth;
-                canvas.height = img.height * scale;
+    button {
+      background: #0ea5e9;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    button:hover {
+      background: #38bdf8;
+    }
 
-                const imgData = canvas.toDataURL("image/jpeg", 0.7);
+    .preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+      justify-content: center;
+    }
 
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF();
+    .img-box {
+      position: relative;
+    }
 
-                pdf.addImage(imgData, "JPEG", 10, 10, 180, 0);
-                pdf.save("converted.pdf");
+    .img-box img {
+      width: 70px;
+      border-radius: 6px;
+    }
 
-                status.innerText = "Done ✅";
+    .remove {
+      position: absolute;
+      top: 0;
+      right: 2px;
+      color: red;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
-            } catch (err) {
-                console.error(err);
-                status.innerText = "Error ❌";
-            }
-        };
+    #status {
+      margin-top: 10px;
+      color: #22c55e;
+    }
 
-        img.src = e.target.result;
-    };
+    .progress {
+      height: 6px;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
 
-    reader.readAsDataURL(file);
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+    }
+
+    .ai-box {
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <h2>🖼️ Smart Image → PDF</h2>
+
+    <!-- AI -->
+    <div class="ai-box">
+      <input type="text" id="aiInput" placeholder="🤖 Type: convert all images">
+      <button onclick="processAI()">Use AI Command</button>
+    </div>
+
+    <input type="file" id="images" multiple accept="image/*">
+
+    <div id="preview" class="preview"></div>
+
+    <button onclick="createPDF()">Convert to PDF</button>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <p id="status"></p>
+
+  </div>
+</div>
+
+<script>
+let images = [];
+
+document.getElementById("images").addEventListener("change", function(e) {
+  images = Array.from(e.target.files);
+  renderImages();
+});
+
+// preview
+function renderImages() {
+  const preview = document.getElementById("preview");
+  preview.innerHTML = "";
+
+  images.forEach((file, index) => {
+    const url = URL.createObjectURL(file);
+
+    const div = document.createElement("div");
+    div.className = "img-box";
+    div.draggable = true;
+
+    div.innerHTML = `
+      <img src="${url}">
+      <span class="remove" onclick="removeImage(${index})">❌</span>
+    `;
+
+    div.ondragstart = () => dragIndex = index;
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = () => swapImages(index);
+
+    preview.appendChild(div);
+  });
+}
+
+let dragIndex = null;
+
+function swapImages(dropIndex) {
+  const temp = images[dragIndex];
+  images[dragIndex] = images[dropIndex];
+  images[dropIndex] = temp;
+  renderImages();
+}
+
+// remove
+function removeImage(index) {
+  images.splice(index, 1);
+  renderImages();
+}
+
+// AI
+function processAI() {
+  const input = document.getElementById("aiInput").value.toLowerCase();
+
+  if (input.includes("convert")) {
+    alert("AI ready: Click convert");
+  }
+}
+
+// convert
+async function createPDF() {
+  const status = document.getElementById("status");
+  const progressBar = document.getElementById("progressBar");
+
+  if (images.length === 0) {
+    alert("Upload images first");
+    return;
+  }
+
+  status.innerText = "⏳ Creating PDF...";
+  progressBar.style.width = "0%";
+
+  const pdfDoc = await PDFLib.PDFDocument.create();
+
+  for (let i = 0; i < images.length; i++) {
+    const file = images[i];
+    const bytes = await file.arrayBuffer();
+
+    let img;
+    if (file.type === "image/jpeg") {
+      img = await pdfDoc.embedJpg(bytes);
+    } else {
+      img = await pdfDoc.embedPng(bytes);
+    }
+
+    const page = pdfDoc.addPage([img.width, img.height]);
+    page.drawImage(img, {
+      x: 0,
+      y: 0,
+      width: img.width,
+      height: img.height
+    });
+
+    progressBar.style.width = ((i + 1) / images.length * 100) + "%";
+  }
+
+  const pdfBytes = await pdfDoc.save();
+
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "images.pdf";
+  link.click();
+
+  status.innerText = "✅ Done!";
 }
 </script>
 
 </body>
-</html>
+    </html>
