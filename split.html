@@ -1,24 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Split PDF</title>
+  <title>Smart PDF Splitter</title>
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input {
+      background: #334155;
+      color: white;
+    }
+
+    button {
+      background: #38bdf8;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .tip {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 10px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #22c55e;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Split PDF</h2>
+<h1>📄 Smart PDF Splitter</h1>
 
-<input type="file" id="pdfFile"><br><br>
+<div class="box">
 
-<!-- Equal split -->
-<input type="number" id="parts" placeholder="Split into parts (e.g. 4)"><br><br>
+<input type="file" id="pdfFile">
 
-<!-- Optional range -->
-<input type="text" id="range" placeholder="Optional: 1-5,6-10"><br><br>
+<input type="number" id="parts" placeholder="Quick Split (e.g. 4 parts)">
 
-<button onclick="splitPDF()">Split</button>
+<input type="text" id="range" placeholder="Smart Split (e.g. 1-20,21-40)">
+
+<button onclick="splitPDF()">Split PDF</button>
+
+<p class="tip">
+💡 Tip: Use range mode to avoid breaking topics<br>
+Example: 1-25,26-50,51-75
+</p>
 
 <p id="status"></p>
+
+</div>
 
 <script>
 async function splitPDF() {
@@ -32,7 +98,7 @@ async function splitPDF() {
     return;
   }
 
-  status.innerText = "Processing...";
+  status.innerText = "⏳ Processing...";
 
   const file = fileInput.files[0];
   const arrayBuffer = await file.arrayBuffer();
@@ -40,32 +106,31 @@ async function splitPDF() {
   const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
   const totalPages = pdfDoc.getPageCount();
 
-  // 🔥 RANGE MODE (FASTEST)
-  if (range) {
+  // 🔥 SMART RANGE MODE
+  if (range.trim() !== "") {
     const ranges = range.split(",");
-    
+
     for (let i = 0; i < ranges.length; i++) {
       const [start, end] = ranges[i].split("-").map(Number);
 
       const newPdf = await PDFLib.PDFDocument.create();
 
-      for (let j = start - 1; j < end; j++) {
+      for (let j = start - 1; j < end && j < totalPages; j++) {
         const [page] = await newPdf.copyPages(pdfDoc, [j]);
         newPdf.addPage(page);
       }
 
       const pdfBytes = await newPdf.save();
-
-      download(pdfBytes, "split_" + (i+1) + ".pdf");
+      download(pdfBytes, "smart_split_" + (i+1) + ".pdf");
     }
 
-    status.innerText = "Done!";
+    status.innerText = "✅ Done (Smart Split)";
     return;
   }
 
-  // 🔥 EQUAL SPLIT MODE
+  // 🔥 QUICK SPLIT MODE
   if (!parts || parts < 1) {
-    alert("Enter number of parts");
+    alert("Enter parts or range");
     status.innerText = "";
     return;
   }
@@ -84,13 +149,13 @@ async function splitPDF() {
     }
 
     const pdfBytes = await newPdf.save();
-    download(pdfBytes, "part_" + (i+1) + ".pdf");
+    download(pdfBytes, "quick_split_" + (i+1) + ".pdf");
   }
 
-  status.innerText = "Done!";
+  status.innerText = "✅ Done (Quick Split)";
 }
 
-// download function
+// download helper
 function download(bytes, filename) {
   const blob = new Blob([bytes], { type: "application/pdf" });
   const link = document.createElement("a");
