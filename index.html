@@ -7,188 +7,187 @@
 
 <style>
 
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #020617;
-  color: white;
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
+transition:0.3s;
 }
 
-/* LIGHT MODE */
-.light {
-  background: #f1f5f9;
-  color: black;
+body.light{
+background:#f1f5f9;
+color:#111;
 }
 
 /* NAV */
-.nav {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background: #020617;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+.nav{
+display:flex;
+justify-content:space-between;
+padding:15px;
+background:#020617;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+body.light .nav{
+background:white;
 }
 
 /* CONTAINER */
-.container {
-  max-width: 900px;
-  margin: auto;
-  padding: 15px;
+.container{
+max-width:900px;
+margin:auto;
+padding:15px;
 }
 
 /* SIDEBAR */
-.sidebar {
-  position: fixed;
-  left: -250px;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: #0f172a;
-  padding: 20px;
-  transition: 0.3s;
-  z-index: 2000;
+.sidebar{
+position:fixed;
+left:-260px;
+top:0;
+width:260px;
+height:100%;
+background:#0f172a;
+padding:20px;
+transition:0.3s;
+z-index:2000;
 }
 
-.sidebar.active { left: 0; }
+.sidebar.active{left:0;}
 
-.sidebar a {
-  display: block;
-  margin: 15px 0;
-  color: white;
-  text-decoration: none;
+.sidebar a{
+display:block;
+margin:15px 0;
+color:white;
+text-decoration:none;
 }
 
-/* OVERLAY FIX */
-.overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  z-index: 1500;
+body.light .sidebar{
+background:white;
 }
 
-.overlay.active { display: block; }
+body.light .sidebar a{
+color:black;
+}
+
+/* OVERLAY */
+.overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+z-index:1500;
+}
+
+.overlay.active{display:block;}
 
 /* HEADER */
-.header {
-  text-align: center;
+.header{text-align:center;}
+
+.search-box{
+display:flex;
+gap:10px;
+margin-top:10px;
 }
 
-.search-box {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+.search-box input{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:none;
 }
 
-.search-box input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-}
-
-.search-box button {
-  padding: 10px;
-  border-radius: 10px;
-  background: #22c55e;
-  border: none;
-  color: white;
+.search-box button{
+padding:10px;
+border-radius:10px;
+background:#22c55e;
+border:none;
+color:white;
 }
 
 /* TOOLS */
-.tools {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-  gap: 10px;
-  margin-top: 20px;
+.tools{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+margin-top:20px;
 }
 
-.tool {
-  background: #0f172a;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: center;
+.tool{
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+text-align:center;
 }
 
-/* LIGHT FIX */
-.light .tool,
-.light .card,
-.light .sidebar {
-  background: white;
-  color: black;
+body.light .tool{
+background:white;
+border:1px solid #ccc;
 }
 
 /* CARD */
-.card {
-  background: #0f172a;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 15px;
+.card{
+background:#0f172a;
+padding:12px;
+border-radius:10px;
+margin-top:15px;
+}
+
+body.light .card{
+background:white;
+border:1px solid #ddd;
 }
 
 /* SERVICES */
-.service {
-  background: #0f172a;
-  margin-top: 8px;
-  padding: 10px;
-  border-radius: 8px;
+.service{margin-top:8px;}
+
+/* REVIEWS */
+.review-box input,textarea{
+width:100%;
+margin-top:5px;
+padding:8px;
+border-radius:8px;
+border:none;
 }
 
-/* REVIEW */
-.review-box input, textarea {
-  width: 100%;
-  margin-top: 5px;
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
+.review-box button{
+margin-top:8px;
+background:#22c55e;
+border:none;
+padding:8px;
+border-radius:8px;
+color:white;
 }
 
-.review-box button {
-  margin-top: 8px;
-  background: #22c55e;
-  border: none;
-  padding: 8px;
-  border-radius: 8px;
-  color: white;
+.review{
+background:#334155;
+padding:8px;
+margin-top:8px;
+border-radius:8px;
 }
 
-.review {
-  background: #334155;
-  padding: 8px;
-  margin-top: 8px;
-  border-radius: 8px;
+body.light .review{
+background:#e2e8f0;
 }
 
-.light .review {
-  background: #e2e8f0;
+/* AI BUTTON */
+.ai-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#22c55e;
+padding:15px;
+border-radius:50%;
 }
 
-/* AI */
-.ai-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #22c55e;
-  padding: 15px;
-  border-radius: 50%;
-}
-
-.ai-chat {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  background: #0f172a;
-  padding: 10px;
-  border-radius: 10px;
-  display: none;
-}
-
-footer {
-  text-align: center;
-  margin-top: 20px;
+footer{
+text-align:center;
+margin-top:20px;
 }
 
 </style>
@@ -200,16 +199,16 @@ footer {
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
 <div class="sidebar" id="sidebar">
-  <a href="merge.html">Merge PDF</a>
-  <a href="split.html">Split PDF</a>
-  <a href="compress.html">Compress PDF</a>
-  <a href="image.html">Image to PDF</a>
+<a href="merge.html">Merge PDF</a>
+<a href="split.html">Split PDF</a>
+<a href="compress.html">Compress PDF</a>
+<a href="image.html">Image to PDF</a>
 </div>
 
 <div class="nav">
-  <button onclick="openMenu()">☰</button>
-  <b>Smart PDF Tools</b>
-  <button onclick="toggleMode()">🌗</button>
+<button onclick="openMenu()">☰</button>
+<b>Smart PDF Tools</b>
+<button onclick="toggleMode()">🌗</button>
 </div>
 
 <div class="container">
@@ -224,35 +223,38 @@ footer {
 </div>
 
 <div class="tools">
-<div class="tool" onclick="go('merge.html')">Merge</div>
-<div class="tool" onclick="go('split.html')">Split</div>
-<div class="tool" onclick="go('compress.html')">Compress</div>
-<div class="tool" onclick="go('image.html')">Image</div>
-<div class="tool" onclick="go('compress-100kb.html')">100KB</div>
+<div class="tool">Merge</div>
+<div class="tool">Split</div>
+<div class="tool">Compress</div>
+<div class="tool">Image</div>
+<div class="tool">100KB</div>
 </div>
 
 <!-- ABOUT -->
 <div class="card">
-Smart PDF Tools is a fast, secure and AI-powered platform that helps you merge, split, compress and convert files instantly. No uploads required, everything runs inside your browser ensuring full privacy. Built for students, professionals and everyday users.
+Smart PDF Tools is a fast, secure, and AI-powered platform designed to help users manage PDF files easily without any technical knowledge or experience.  
+All tools run directly inside your browser, meaning your files are never uploaded to any server, ensuring complete privacy and maximum security at all times.  
+It is built for students, professionals, and everyday users who need quick, reliable, and efficient PDF solutions in their daily digital tasks.  
+Our goal is to provide a smooth, modern, and powerful experience that feels simple yet performs like a premium professional tool suite.
 </div>
 
 <!-- SERVICES -->
 <div class="card">
 <h3>⚡ Services</h3>
 
-<div class="service">1. Merge multiple PDFs</div>
-<div class="service">2. Split PDF pages</div>
-<div class="service">3. Compress large PDFs</div>
-<div class="service">4. Convert image to PDF</div>
-<div class="service">5. Compress to 100KB</div>
-<div class="service">6. AI command system</div>
-<div class="service">7. Drag & drop upload</div>
-<div class="service">8. Instant processing</div>
-<div class="service">9. No file upload privacy</div>
-<div class="service">10. Mobile friendly UI</div>
-<div class="service">11. Fast performance</div>
-<div class="service">12. Easy navigation</div>
-<div class="service">13. Free forever tools</div>
+<div class="service">1. Merge multiple PDF files into one organized document quickly without losing formatting or quality.</div>
+<div class="service">2. Split large PDF documents into smaller files or selected page ranges for easier sharing and storage.</div>
+<div class="service">3. Compress PDF files efficiently to reduce size while maintaining readability and overall document quality.</div>
+<div class="service">4. Convert images such as JPG and PNG into high-quality PDF documents with proper alignment and structure.</div>
+<div class="service">5. Compress PDF files specifically to 100KB size for online form submissions and official requirements.</div>
+<div class="service">6. Use AI command system to perform actions by typing simple instructions instead of manual navigation.</div>
+<div class="service">7. Drag and drop files directly into the tool area for faster and more convenient file processing experience.</div>
+<div class="service">8. Enjoy instant processing speeds without waiting time, making the tool extremely fast and efficient.</div>
+<div class="service">9. No file upload system ensures complete privacy and security as everything works locally in your browser.</div>
+<div class="service">10. Fully responsive design allows smooth usage across mobile devices, tablets, and desktop browsers.</div>
+<div class="service">11. Clean and modern interface makes it easy for beginners to use tools without confusion or learning curve.</div>
+<div class="service">12. Lightweight performance ensures the website loads quickly even on slow internet connections or devices.</div>
+<div class="service">13. All tools are completely free to use without hidden charges, subscriptions, or limitations on usage.</div>
 
 </div>
 
@@ -281,74 +283,62 @@ Smart PDF Tools is a fast, secure and AI-powered platform that helps you merge, 
 
 </div>
 
-<div class="ai-btn" onclick="toggleAI()">💬</div>
-
-<div class="ai-chat" id="aiBox">
-<input id="aiInput" placeholder="Type command">
-<button onclick="runAI()">Go</button>
-</div>
+<div class="ai-btn">💬</div>
 
 <script>
 
-function go(p){window.location=p;}
-
 function openMenu(){
-  sidebar.classList.add("active");
-  overlay.classList.add("active");
+sidebar.classList.add("active");
+overlay.classList.add("active");
 }
 
 function closeMenu(){
-  sidebar.classList.remove("active");
-  overlay.classList.remove("active");
+sidebar.classList.remove("active");
+overlay.classList.remove("active");
 }
 
 function toggleMode(){
-  document.body.classList.toggle("light");
-}
-
-function toggleAI(){
-  let b=document.getElementById("aiBox");
-  b.style.display = b.style.display==="block" ? "none" : "block";
+document.body.classList.toggle("light");
 }
 
 function runAI(){
-  let c=document.getElementById("cmd").value.toLowerCase();
+let c=document.getElementById("cmd").value.toLowerCase();
 
-  if(c.includes("merge")) go("merge.html");
-  else if(c.includes("split")) go("split.html");
-  else if(c.includes("image")) go("image.html");
-  else if(c.includes("100")) go("compress-100kb.html");
-  else if(c.includes("compress")) go("compress.html");
+if(c.includes("merge")) location="merge.html";
+else if(c.includes("split")) location="split.html";
+else if(c.includes("image")) location="image.html";
+else if(c.includes("100")) location="compress-100kb.html";
+else if(c.includes("compress")) location="compress.html";
 }
 
 /* REVIEWS */
-let defaultReviews = [
-"⭐⭐⭐⭐⭐ Best free PDF tool!",
-"⭐⭐⭐⭐ Very fast and smooth UI",
-"⭐⭐⭐⭐⭐ Works perfectly on mobile",
-"⭐⭐⭐⭐⭐ Clean and easy to use"
+let defaultReviews=[
+"⭐⭐⭐⭐⭐ This is one of the best free PDF tools I have used because it is fast, simple, and works perfectly on mobile devices.",
+"⭐⭐⭐⭐ I really liked how smooth and easy the interface feels while using different tools without any confusion or delay.",
+"⭐⭐⭐⭐⭐ The privacy feature is amazing since files are not uploaded anywhere which makes it safe and secure to use.",
+"⭐⭐⭐⭐⭐ This tool helped me compress and merge files quickly without any errors or quality loss which is impressive."
 ];
 
 function addReview(){
-  let name=nameInput.value;
-  let msg=msgInput.value;
-  let rating=ratingSelect.value;
+let name=nameInput.value;
+let msg=msgInput.value;
+let rating=ratingSelect.value;
 
-  let r = `${rating} ${name}: ${msg}`;
+let r=`${rating} ${name}: ${msg}`;
 
-  let arr=JSON.parse(localStorage.getItem("reviews")||JSON.stringify(defaultReviews));
-  arr.push(r);
-  localStorage.setItem("reviews", JSON.stringify(arr));
+let arr=JSON.parse(localStorage.getItem("reviews")||JSON.stringify(defaultReviews));
+arr.push(r);
 
-  loadReviews();
+localStorage.setItem("reviews",JSON.stringify(arr));
+loadReviews();
 }
 
 function loadReviews(){
-  let arr=JSON.parse(localStorage.getItem("reviews")||JSON.stringify(defaultReviews));
-  reviews.innerHTML="";
-  arr.forEach(x=>{
-    reviews.innerHTML+=`<div class="review">${x}</div>`;
-  });
+let arr=JSON.parse(localStorage.getItem("reviews")||JSON.stringify(defaultReviews));
+reviews.innerHTML="";
+arr.forEach(x=>{
+reviews.innerHTML+=`<div class="review">${x}</div>`;
+});
 }
 
 loadReviews();
