@@ -2,44 +2,69 @@
 <html>
 <head>
 
-<title>Free PDF Tools Online - Merge, Split, Compress PDF</title>
+<title>Smart PDF Tools - Free Online PDF Tools</title>
 
-<meta name="description" content="Free online PDF tools - merge, split, compress, convert images to PDF instantly. Fast, secure, AI powered and no upload required.">
-
-<meta name="keywords" content="pdf tools, merge pdf, split pdf, compress pdf, image to pdf, compress pdf to 100kb">
+<meta name="description" content="Free online PDF tools to merge, split, compress, and convert files instantly. AI powered and secure.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:title" content="Smart PDF Tools">
-<meta property="og:description" content="Fast and free AI powered PDF tools">
-<meta property="og:type" content="website">
-
 <style>
+
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(135deg, #020617, #0f172a);
+  background: #020617;
   color: white;
+  transition: 0.3s;
+}
+
+/* LIGHT MODE */
+.light {
+  background: #f1f5f9;
+  color: black;
+}
+
+/* NAVBAR */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #020617;
+  position: sticky;
+  top: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  left: -220px;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: #0f172a;
+  padding: 20px;
+  transition: 0.3s;
+}
+
+.sidebar a {
+  display: block;
+  margin: 10px 0;
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar.active {
+  left: 0;
 }
 
 /* HEADER */
 .header {
   text-align: center;
-  padding: 40px 20px;
+  padding: 30px;
 }
 
 .header h1 {
-  font-size: 28px;
   color: #38bdf8;
-}
-
-.header p {
-  color: #94a3b8;
-}
-
-/* AI SEARCH */
-.search-box {
-  margin-top: 15px;
 }
 
 .search-box input {
@@ -54,86 +79,122 @@ body {
 .search-box button {
   padding: 10px;
   border-radius: 10px;
-  border: none;
   background: #22c55e;
+  border: none;
   color: white;
-  cursor: pointer;
 }
 
-/* TOOLS */
+/* GRID */
 .tools {
-  max-width: 500px;
-  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 15px;
   padding: 20px;
+  max-width: 900px;
+  margin: auto;
 }
 
-.tool-card {
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
-  margin: 12px 0;
+.tool {
+  background: #0f172a;
+  padding: 20px;
   border-radius: 12px;
+  text-align: center;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.tool-card:hover {
+.tool:hover {
   transform: scale(1.05);
-  background: rgba(255,255,255,0.1);
+  background: #1e293b;
 }
 
-/* SECTION */
+/* SECTIONS */
 .section {
-  max-width: 500px;
+  max-width: 900px;
   margin: auto;
   padding: 20px;
 }
 
-.section h2 {
-  color: #38bdf8;
-}
-
-/* CARDS */
 .card {
-  background: rgba(255,255,255,0.05);
-  padding: 10px;
+  background: #0f172a;
+  padding: 12px;
+  margin: 10px 0;
   border-radius: 10px;
-  margin: 8px 0;
-  font-size: 14px;
-  color: #cbd5f5;
 }
 
-/* BLOG */
-.blog-card {
-  background: rgba(56,189,248,0.1);
+/* REVIEWS */
+.review {
+  background: #1e293b;
   padding: 12px;
   border-radius: 10px;
   margin: 10px 0;
+}
+
+/* AI CHAT */
+.ai-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #22c55e;
+  border-radius: 50%;
+  padding: 15px;
   cursor: pointer;
 }
 
-.blog-card:hover {
-  background: rgba(56,189,248,0.2);
+.ai-chat {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 250px;
+  background: #0f172a;
+  padding: 10px;
+  border-radius: 10px;
+  display: none;
+}
+
+.ai-chat input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 5px;
 }
 
 /* FOOTER */
 footer {
   text-align: center;
   padding: 20px;
-  color: #64748b;
+  color: gray;
 }
+
 </style>
 
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <a href="merge.html">Merge PDF</a>
+  <a href="split.html">Split PDF</a>
+  <a href="compress.html">Compress PDF</a>
+  <a href="image.html">Image to PDF</a>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button onclick="toggleMenu()">☰</button>
+  <b>Smart PDF Tools</b>
+  <button onclick="toggleMode()">🌙</button>
+</div>
+
 <!-- HEADER -->
 <div class="header">
-  <h1>🚀 Free PDF Tools Online</h1>
+  <h1>🚀 Smart PDF Tools</h1>
   <p>Fast • Secure • AI Powered</p>
 
   <div class="search-box">
-    <input type="text" id="cmd" placeholder="🤖 e.g merge pdf, compress to 100kb">
+    <input id="cmd" placeholder="merge pdf, compress to 100kb">
     <button onclick="runAI()">Run</button>
   </div>
 </div>
@@ -141,86 +202,84 @@ footer {
 <!-- TOOLS -->
 <div class="tools">
 
-  <div class="tool-card" onclick="go('merge.html')">📄 Merge PDF</div>
-  <div class="tool-card" onclick="go('split.html')">✂️ Split PDF</div>
-  <div class="tool-card" onclick="go('compress.html')">📉 Compress PDF</div>
-  <div class="tool-card" onclick="go('image.html')">🖼 Image to PDF</div>
-  <div class="tool-card" onclick="go('compress-100kb.html')">🎯 Compress to 100KB</div>
+<div class="tool" onclick="go('merge.html')">📄 Merge PDF</div>
+<div class="tool" onclick="go('split.html')">✂️ Split PDF</div>
+<div class="tool" onclick="go('compress.html')">📉 Compress PDF</div>
+<div class="tool" onclick="go('image.html')">🖼 Image to PDF</div>
+<div class="tool" onclick="go('compress-100kb.html')">🎯 100KB Compress</div>
 
 </div>
 
-<!-- SERVICES + SEO -->
+<!-- ABOUT -->
 <div class="section">
-  <h2>⚡ Our Services</h2>
-
-  <div class="card">Merge multiple PDF files into one document instantly.</div>
-  <div class="card">Split PDF into pages or custom ranges.</div>
-  <div class="card">Compress PDF files for faster sharing.</div>
-  <div class="card">Convert images (JPG, PNG) into PDF.</div>
-  <div class="card">AI command system: type what you want and go.</div>
+<h2>About</h2>
+<div class="card">
+Smart PDF Tools is a fast and secure platform to manage your PDF files. 
+No uploads, full privacy, and instant processing. 
+Built for students, professionals, and everyday users.
+</div>
 </div>
 
-<!-- SEO TEXT -->
+<!-- SERVICES -->
 <div class="section">
-  <h2>Free Online PDF Tools</h2>
-
-  <div class="card">
-    Use our free PDF tools to merge, split, compress, and convert files instantly online.
-  </div>
-
-  <div class="card">
-    Compress PDF to 100KB, merge documents, or convert images into PDF easily without uploading files.
-  </div>
-
-  <div class="card">
-    Our AI-powered PDF tools provide fast, secure and browser-based solutions.
-  </div>
+<h2>Services</h2>
+<div class="card">Merge PDF files instantly</div>
+<div class="card">Split PDF pages easily</div>
+<div class="card">Compress large PDFs</div>
+<div class="card">Convert images to PDF</div>
 </div>
 
-<!-- BLOG SECTION -->
+<!-- REVIEWS -->
 <div class="section">
-  <h2>📚 Guides & Tips</h2>
+<h2>Reviews</h2>
 
-  <div class="blog-card" onclick="alert('Coming soon')">
-    How to Compress PDF to 100KB (Step-by-Step)
-  </div>
+<div class="review">⭐⭐⭐⭐⭐ Super fast & clean UI</div>
+<div class="review">⭐⭐⭐⭐⭐ Best free tool</div>
+<div class="review">⭐⭐⭐⭐⭐ Works perfectly</div>
 
-  <div class="blog-card" onclick="alert('Coming soon')">
-    Best Free PDF Tools Online in 2026
-  </div>
+</div>
 
-  <div class="blog-card" onclick="alert('Coming soon')">
-    How to Merge PDF Files Easily
-  </div>
+<!-- AI CHAT -->
+<div class="ai-btn" onclick="toggleAI()">🤖</div>
 
+<div class="ai-chat" id="aiBox">
+  <input id="aiInput" placeholder="Type command">
+  <button onclick="runAI()">Go</button>
 </div>
 
 <footer>
-  © 2026 Smart PDF Tools
+© 2026 Smart PDF Tools
 </footer>
 
 <script>
-function go(p){
-  window.location.href = p;
+
+function go(p){window.location=p;}
+
+function toggleMode(){
+  document.body.classList.toggle("light");
 }
 
-/* AI COMMAND SYSTEM */
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
+function toggleAI(){
+  let box=document.getElementById("aiBox");
+  box.style.display = box.style.display==="block" ? "none" : "block";
+}
+
 function runAI(){
-  let cmd = document.getElementById("cmd").value.toLowerCase();
+  let cmd=document.getElementById("cmd").value.toLowerCase();
 
   if(cmd.includes("merge")) go("merge.html");
-
   else if(cmd.includes("split")) go("split.html");
-
   else if(cmd.includes("image")) go("image.html");
-
   else if(cmd.includes("100")) go("compress-100kb.html");
-
   else if(cmd.includes("compress")) go("compress.html");
-
-  else alert("❌ Command not recognized");
+  else alert("Command not found");
 }
+
 </script>
 
 </body>
-    </html>
+  </html>
