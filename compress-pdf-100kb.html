@@ -1,22 +1,222 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Compress PDF to 100KB Free</title>
-  <meta name="description" content="Compress PDF to 100KB online free tool. Fast and secure.">
-  <link rel="stylesheet" href="css/style.css">
+  <title>Smart File Compressor</title>
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #020617;
+      color: white;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.7);
+    }
+
+    h2 {
+      color: #38bdf8;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input, select {
+      background: #1e293b;
+      color: white;
+    }
+
+    button {
+      background: #0ea5e9;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #38bdf8;
+    }
+
+    .progress {
+      height: 6px;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #22c55e;
+    }
+
+    .ai-box {
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>Compress PDF to 100KB</h1>
-<p>This tool helps reduce your PDF file size to around 100KB.</p>
+<div class="container">
+  <div class="card">
 
-<input type="file" id="file">
-<button onclick="compressPDF()">Compress</button>
+    <h2>⚡ Smart File Compressor</h2>
 
-<div id="status"></div>
+    <!-- AI -->
+    <div class="ai-box">
+      <input type="text" id="aiInput" placeholder="🤖 compress to 100kb / low / high">
+      <button onclick="processAI()">Use AI Command</button>
+    </div>
 
-<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-<script src="js/compress.js"></script>
+    <input type="file" id="fileInput">
+
+    <select id="quality">
+      <option value="0.8">High Quality</option>
+      <option value="0.5">Medium</option>
+      <option value="0.2">Low (Max compression)</option>
+    </select>
+
+    <button onclick="compress()">Compress</button>
+
+    <div class="progress">
+      <div class="progress-bar" id="bar"></div>
+    </div>
+
+    <p id="status"></p>
+
+  </div>
+</div>
+
+<script>
+function processAI() {
+  const input = document.getElementById("aiInput").value.toLowerCase();
+
+  if (input.includes("100")) {
+    document.getElementById("quality").value = "0.2";
+    alert("AI set: Strong compression (~100KB target)");
+  }
+  if (input.includes("low")) {
+    document.getElementById("quality").value = "0.2";
+  }
+  if (input.includes("medium")) {
+    document.getElementById("quality").value = "0.5";
+  }
+  if (input.includes("high")) {
+    document.getElementById("quality").value = "0.8";
+  }
+}
+
+async function compress() {
+  const file = document.getElementById("fileInput").files[0];
+  const quality = parseFloat(document.getElementById("quality").value);
+  const status = document.getElementById("status");
+  const bar = document.getElementById("bar");
+
+  if (!file) {
+    alert("Upload file first");
+    return;
+  }
+
+  status.innerText = "⏳ Processing...";
+  bar.style.width = "10%";
+
+  // IMAGE COMPRESSION
+  if (file.type.startsWith("image/")) {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      const compressed = canvas.toDataURL("image/jpeg", quality);
+
+      const link = document.createElement("a");
+      link.href = compressed;
+      link.download = "compressed.jpg";
+      link.click();
+
+      bar.style.width = "100%";
+      status.innerText = "✅ Image Compressed!";
+    };
+
+    return;
+  }
+
+  // PDF COMPRESSION
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+
+  const newPdf = await PDFLib.PDFDocument.create();
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+
+    const viewport = page.getViewport({scale: 1});
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({canvasContext: ctx, viewport}).promise;
+
+    const imgData = canvas.toDataURL("image/jpeg", quality);
+    const imgBytes = await fetch(imgData).then(r => r.arrayBuffer());
+
+    const img = await newPdf.embedJpg(imgBytes);
+
+    const newPage = newPdf.addPage([img.width, img.height]);
+    newPage.drawImage(img, {x:0,y:0,width:img.width,height:img.height});
+
+    bar.style.width = ((i / pdf.numPages) * 100) + "%";
+  }
+
+  const pdfBytes = await newPdf.save();
+
+  const blob = new Blob([pdfBytes], {type:"application/pdf"});
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "compressed.pdf";
+  link.click();
+
+  status.innerText = "✅ PDF Compressed!";
+}
+</script>
 
 </body>
-</html>
+  </html>
