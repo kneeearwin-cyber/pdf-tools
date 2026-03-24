@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<url><loc>https://yourdomain.com/</loc></url>
-<url><loc>https://yourdomain.com/merge.html</loc></url>
-<url><loc>https://yourdomain.com/compress.html</loc></url>
-<url><loc>https://yourdomain.com/image.html</loc></url>
-<url><loc>https://yourdomain.com/split.html</loc></url>
-<url><loc>https://yourdomain.com/compress-pdf-100kb.html</loc></url>
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/</loc>
+</url>
+
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/merge.html</loc>
+</url>
+
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/split.html</loc>
+</url>
+
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/compress.html</loc>
+</url>
+
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/image.html</loc>
+</url>
+
+<url>
+<loc>https://kneeearwin-cyber.github.io/pdf-tools/compress-100kb.html</loc>
+</url>
 
 </urlset>
