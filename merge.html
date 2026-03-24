@@ -54,7 +54,6 @@
     }
 
     .file-list {
-      text-align: left;
       margin-top: 10px;
     }
 
@@ -67,6 +66,7 @@
       justify-content: space-between;
       align-items: center;
       font-size: 12px;
+      cursor: grab;
     }
 
     .remove {
@@ -79,13 +79,27 @@
       color: #22c55e;
     }
 
+    .progress {
+      height: 6px;
+      background: #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #22c55e;
+      transition: width 0.3s;
+    }
+
     .ai-box {
       background: #1e293b;
       padding: 10px;
       border-radius: 10px;
       margin-bottom: 10px;
     }
-
   </style>
 </head>
 
@@ -96,7 +110,6 @@
 
     <h2>📄 Smart PDF Merger</h2>
 
-    <!-- 🤖 AI -->
     <div class="ai-box">
       <input type="text" id="aiInput" placeholder="🤖 Type: merge all files">
       <button onclick="processAI()">Use AI Command</button>
@@ -108,6 +121,10 @@
 
     <button onclick="mergePDF()">Merge PDF</button>
 
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
     <p id="status"></p>
 
   </div>
@@ -116,12 +133,23 @@
 <script>
 let files = [];
 
+// load files
 document.getElementById("pdfFiles").addEventListener("change", function(e) {
   files = Array.from(e.target.files);
+
+  // 🧠 AUTO SORT
+  files.sort((a, b) => {
+    const getNumber = name => {
+      const m = name.match(/\d+/);
+      return m ? parseInt(m[0]) : 0;
+    };
+    return getNumber(a.name) - getNumber(b.name);
+  });
+
   renderFiles();
 });
 
-// show file list
+// render list
 function renderFiles() {
   const list = document.getElementById("fileList");
   list.innerHTML = "";
@@ -129,34 +157,50 @@ function renderFiles() {
   files.forEach((file, index) => {
     const div = document.createElement("div");
     div.className = "file-item";
+    div.draggable = true;
 
     div.innerHTML = `
       ${file.name}
       <span class="remove" onclick="removeFile(${index})">❌</span>
     `;
 
+    // drag events
+    div.ondragstart = () => dragIndex = index;
+    div.ondragover = e => e.preventDefault();
+    div.ondrop = () => swapFiles(index);
+
     list.appendChild(div);
   });
 }
 
-// remove file
+let dragIndex = null;
+
+function swapFiles(dropIndex) {
+  const temp = files[dragIndex];
+  files[dragIndex] = files[dropIndex];
+  files[dropIndex] = temp;
+  renderFiles();
+}
+
+// remove
 function removeFile(index) {
   files.splice(index, 1);
   renderFiles();
 }
 
-// 🤖 AI (basic)
+// AI
 function processAI() {
   const input = document.getElementById("aiInput").value.toLowerCase();
 
   if (input.includes("merge")) {
-    alert("AI ready: Click merge to combine files");
+    alert("AI ready: Click merge");
   }
 }
 
 // merge
 async function mergePDF() {
   const status = document.getElementById("status");
+  const progressBar = document.getElementById("progressBar");
 
   if (files.length === 0) {
     alert("Upload PDFs first");
@@ -164,16 +208,21 @@ async function mergePDF() {
   }
 
   status.innerText = "⏳ Merging...";
+  progressBar.style.width = "0%";
 
   const mergedPdf = await PDFLib.PDFDocument.create();
 
-  for (let file of files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
     const buffer = await file.arrayBuffer();
     const pdf = await PDFLib.PDFDocument.load(buffer);
 
     const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-
     pages.forEach(p => mergedPdf.addPage(p));
+
+    // update progress
+    progressBar.style.width = ((i + 1) / files.length * 100) + "%";
   }
 
   const bytes = await mergedPdf.save();
@@ -190,4 +239,4 @@ async function mergePDF() {
 </script>
 
 </body>
-</html>
+  </html>
