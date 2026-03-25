@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="description" content="Free online PDF tools to merge, split, compress and convert PDF files instantly without upload. Fast and secure PDF tools.">
-<meta name="keywords" content="pdf tools, merge pdf, split pdf, compress pdf, image to pdf, free pdf tools">
 
 <title>Smart PDF Tools</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +12,14 @@
 body{
 margin:0;
 font-family:Arial;
-background:#020617;
-color:white;
+background:#f1f5f9;
+color:#111;
 transition:0.3s;
 }
 
-body.light{
-background:#f1f5f9;
-color:#111;
+body.dark{
+background:#020617;
+color:white;
 }
 
 /* NAV */
@@ -29,14 +27,14 @@ color:#111;
 display:flex;
 justify-content:space-between;
 padding:15px;
-background:#020617;
+background:white;
 position:sticky;
 top:0;
 z-index:1000;
 }
 
-body.light .nav{
-background:white;
+body.dark .nav{
+background:#020617;
 }
 
 /* CONTAINER */
@@ -53,27 +51,29 @@ left:-260px;
 top:0;
 width:260px;
 height:100%;
-background:#0f172a;
+background:white;
 padding:20px;
 transition:0.3s;
 z-index:2000;
+overflow-y:auto;
+}
+
+body.dark .sidebar{
+background:#0f172a;
 }
 
 .sidebar.active{left:0;}
 
 .sidebar a{
 display:block;
-margin:15px 0;
-color:white;
-text-decoration:none;
-}
-
-body.light .sidebar{
-background:white;
-}
-
-body.light .sidebar a{
+margin:12px 0;
 color:black;
+text-decoration:none;
+font-weight:bold;
+}
+
+body.dark .sidebar a{
+color:white;
 }
 
 /* OVERLAY */
@@ -121,28 +121,34 @@ margin-top:20px;
 }
 
 .tool{
-background:#0f172a;
+background:white;
 padding:15px;
 border-radius:10px;
 text-align:center;
+cursor:pointer;
+border:1px solid #ddd;
+font-weight:bold;
 }
 
-body.light .tool{
-background:white;
-border:1px solid #ccc;
+body.dark .tool{
+background:#0f172a;
+color:white;
+border:none;
 }
 
 /* CARD */
 .card{
-background:#0f172a;
+background:white;
 padding:12px;
 border-radius:10px;
 margin-top:15px;
+border:1px solid #ddd;
 }
 
-body.light .card{
-background:white;
-border:1px solid #ddd;
+body.dark .card{
+background:#0f172a;
+color:white;
+border:none;
 }
 
 /* SERVICES */
@@ -167,14 +173,14 @@ color:white;
 }
 
 .review{
-background:#334155;
+background:#e2e8f0;
 padding:8px;
 margin-top:8px;
 border-radius:8px;
 }
 
-body.light .review{
-background:#e2e8f0;
+body.dark .review{
+background:#334155;
 }
 
 /* AI BUTTON */
@@ -185,6 +191,7 @@ right:20px;
 background:#22c55e;
 padding:15px;
 border-radius:50%;
+color:white;
 }
 
 footer{
@@ -201,20 +208,27 @@ margin-top:20px;
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
 <div class="sidebar" id="sidebar">
+
+<h3>Tools</h3>
 <a href="merge.html">Merge PDF</a>
 <a href="split.html">Split PDF</a>
 <a href="compress.html">Compress PDF</a>
 <a href="image.html">Image to PDF</a>
-  <a href="merge-pdf-online.html">Merge PDF Guide</a>
-  <a href="compress-pdf-to-100kb.html">Compress PDF to 100KB</a>
-  <a href="image-to-pdf-online.html">Image to PDF Online</a>
-  <a href="split-pdf-pages.html">Split PDF Pages</a>
+
+<hr>
+
+<h3>SEO Pages</h3>
+<a href="merge-pdf-online.html">Merge PDF Guide</a>
+<a href="compress-pdf-to-100kb.html">Compress PDF to 100KB</a>
+<a href="image-to-pdf-online.html">Image to PDF Online</a>
+<a href="split-pdf-pages.html">Split PDF Pages</a>
+
 </div>
 
 <div class="nav">
 <button onclick="openMenu()">☰</button>
 <b>Smart PDF Tools</b>
-<button onclick="toggleMode()">🌗</button>
+<button onclick="toggleMode()">🌙</button>
 </div>
 
 <div class="container">
@@ -228,53 +242,35 @@ margin-top:20px;
 </div>
 </div>
 
+<!-- TOOLS -->
 <div class="tools">
-<div class="tool">Merge</div>
-<div class="tool">Split</div>
-<div class="tool">Compress</div>
-<div class="tool">Image</div>
-<div class="tool">100KB</div>
+<div class="tool" onclick="goTool('merge')">Merge</div>
+<div class="tool" onclick="goTool('split')">Split</div>
+<div class="tool" onclick="goTool('compress')">Compress</div>
+<div class="tool" onclick="goTool('image')">Image</div>
+<div class="tool" onclick="goTool('100kb')">100KB</div>
 </div>
 
 <!-- ABOUT -->
 <div class="card">
-Smart PDF Tools is a fast, secure, and AI-powered platform designed to help users manage PDF files easily without any technical knowledge or experience.  
-All tools run directly inside your browser, meaning your files are never uploaded to any server, ensuring complete privacy and maximum security at all times.  
-It is built for students, professionals, and everyday users who need quick, reliable, and efficient PDF solutions in their daily digital tasks.  
-Our goal is to provide a smooth, modern, and powerful experience that feels simple yet performs like a premium professional tool suite.
+Smart PDF Tools is a fast, secure, and AI-powered platform designed to help users manage PDF files easily without any technical knowledge or experience.
+All tools run directly inside your browser, ensuring complete privacy and maximum security.
+</div>
+
+<!-- AI SECTION -->
+<div class="card">
+<h2>AI Smart PDF Assistant</h2>
+<p>Use simple commands like "merge pdf" or "compress file" and our smart system will guide you instantly.</p>
 </div>
 
 <!-- SERVICES -->
 <div class="card">
 <h3>⚡ Services</h3>
-
-<div class="service">1. Merge multiple PDF files into one organized document quickly without losing formatting or quality.</div>
-<div class="service">2. Split large PDF documents into smaller files or selected page ranges for easier sharing and storage.</div>
-<div class="service">3. Compress PDF files efficiently to reduce size while maintaining readability and overall document quality.</div>
-<div class="service">4. Convert images such as JPG and PNG into high-quality PDF documents with proper alignment and structure.</div>
-<div class="service">5. Compress PDF files specifically to 100KB size for online form submissions and official requirements.</div>
-<div class="service">6. Use AI command system to perform actions by typing simple instructions instead of manual navigation.</div>
-<div class="service">7. Drag and drop files directly into the tool area for faster and more convenient file processing experience.</div>
-<div class="service">8. Enjoy instant processing speeds without waiting time, making the tool extremely fast and efficient.</div>
-<div class="service">9. No file upload system ensures complete privacy and security as everything works locally in your browser.</div>
-<div class="service">10. Fully responsive design allows smooth usage across mobile devices, tablets, and desktop browsers.</div>
-<div class="service">11. Clean and modern interface makes it easy for beginners to use tools without confusion or learning curve.</div>
-<div class="service">12. Lightweight performance ensures the website loads quickly even on slow internet connections or devices.</div>
-<div class="service">13. All tools are completely free to use without hidden charges, subscriptions, or limitations on usage.</div>
-
+<div class="service">Merge PDF files quickly</div>
+<div class="service">Split PDF pages easily</div>
+<div class="service">Compress files efficiently</div>
+<div class="service">Convert images to PDF</div>
 </div>
-  <h2>AI Smart PDF Assistant</h2>
-
-<p>
-Our AI-powered assistant helps you choose the best PDF tool instantly based on your needs. Whether you want to merge, compress, split, or convert files, our smart system guides you for faster and better results.
-</p>
-
-<ul>
-<li>AI suggests the best tool for your task automatically</li>
-<li>Saves time by guiding users instantly without confusion</li>
-<li>Improves workflow for students and professionals</li>
-<li>Modern AI experience that enhances productivity</li>
-</ul>
 
 <!-- REVIEWS -->
 <div class="card review-box">
@@ -305,36 +301,56 @@ Our AI-powered assistant helps you choose the best PDF tool instantly based on y
 
 <script>
 
+/* MENU */
 function openMenu(){
-sidebar.classList.add("active");
-overlay.classList.add("active");
+document.getElementById("sidebar").classList.add("active");
+document.getElementById("overlay").classList.add("active");
 }
 
 function closeMenu(){
-sidebar.classList.remove("active");
-overlay.classList.remove("active");
+document.getElementById("sidebar").classList.remove("active");
+document.getElementById("overlay").classList.remove("active");
 }
 
+/* MODE */
 function toggleMode(){
-document.body.classList.toggle("light");
+document.body.classList.toggle("dark");
+localStorage.setItem("mode",document.body.classList.contains("dark")?"dark":"light");
 }
 
+window.onload=function(){
+let mode=localStorage.getItem("mode");
+if(mode==="dark"){
+document.body.classList.add("dark");
+}
+};
+
+/* BUTTON FIX */
+function goTool(tool){
+if(tool==="merge") location.href="merge.html";
+else if(tool==="split") location.href="split.html";
+else if(tool==="compress") location.href="compress.html";
+else if(tool==="image") location.href="image.html";
+else if(tool==="100kb") location.href="compress-pdf-100kb.html";
+}
+
+/* AI */
 function runAI(){
 let c=document.getElementById("cmd").value.toLowerCase();
 
-if(c.includes("merge")) location="merge.html";
-else if(c.includes("split")) location="split.html";
-else if(c.includes("image")) location="image.html";
-else if(c.includes("100")) location="compress-100kb.html";
-else if(c.includes("compress")) location="compress.html";
+if(c.includes("merge")) goTool("merge");
+else if(c.includes("split")) goTool("split");
+else if(c.includes("image")) goTool("image");
+else if(c.includes("100")) goTool("100kb");
+else if(c.includes("compress")) goTool("compress");
+else alert("Try: merge, split, compress, image");
 }
 
 /* REVIEWS */
 let defaultReviews=[
-"⭐⭐⭐⭐⭐ This is one of the best free PDF tools I have used because it is fast, simple, and works perfectly on mobile devices.",
-"⭐⭐⭐⭐ I really liked how smooth and easy the interface feels while using different tools without any confusion or delay.",
-"⭐⭐⭐⭐⭐ The privacy feature is amazing since files are not uploaded anywhere which makes it safe and secure to use.",
-"⭐⭐⭐⭐⭐ This tool helped me compress and merge files quickly without any errors or quality loss which is impressive."
+"⭐⭐⭐⭐⭐ Best free PDF tool, super fast.",
+"⭐⭐⭐⭐ Easy and clean interface.",
+"⭐⭐⭐⭐⭐ Very secure and private."
 ];
 
 function addReview(){
@@ -364,4 +380,4 @@ loadReviews();
 </script>
 
 </body>
-  </html>
+</html>
